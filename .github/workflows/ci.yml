@@ -95,6 +95,8 @@ jobs:
           go-version: stable
       - name: Install dependencies
         run: go mod download
+      - name: Run go mod tidy
+        run: go mod tidy
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:

@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Build and Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,23 +22,17 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      - name: Install golangci-lint
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.1
-
       - name: Clean caches
         run: make clean
 
       - name: Run unit tests
         run: make unit
 
-      - name: Run linting
-        run: make lint
-
       - name: Run coverage
         run: make coverage
 
   integration:
+    name: Integration Tests
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -80,13 +75,28 @@ jobs:
             fi;
             sleep 5;
           done;
-          exit 1;
+          exit 1
 
       - name: Apply database migrations
         run: |
-          psql -h localhost -p 5432 -U postgres -d testdb -f migrations/schema.sql
+          psql -h localhost -p 5432 -U postgres -d testdb -f migrations/init.sql
         env:
           PGPASSWORD: postgres
 
       - name: Run integration tests with Docker
         run: make integration
+
+  golangci-lint:
+    name: lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.60

@@ -1,0 +1,214 @@
+basePath: /
+definitions:
+  models.AuthRequest:
+    description: Запрос на вход/регистрацию
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.AuthResponse:
+    description: Ответ на вход/регистрацию
+    properties:
+      token:
+        type: string
+    type: object
+  models.CoinHistory:
+    description: История переводов коинов
+    properties:
+      received:
+        items:
+          $ref: '#/definitions/models.ReceivedTransaction'
+        type: array
+      sent:
+        items:
+          $ref: '#/definitions/models.SentTransaction'
+        type: array
+    type: object
+  models.ErrorResponse:
+    description: Ответ с ошибкой
+    properties:
+      errors:
+        type: string
+    type: object
+  models.InfoResponse:
+    description: Информация о пользователе
+    properties:
+      coinHistory:
+        $ref: '#/definitions/models.CoinHistory'
+      coins:
+        type: integer
+      inventory:
+        items:
+          $ref: '#/definitions/models.Item'
+        type: array
+    type: object
+  models.Item:
+    description: Параметры айтема
+    properties:
+      quantity:
+        type: integer
+      type:
+        type: string
+    type: object
+  models.ReceivedTransaction:
+    description: Полученные коины
+    properties:
+      amount:
+        type: integer
+      fromUser:
+        type: string
+    type: object
+  models.SendCoinRequest:
+    description: Запрос на перевод коинов
+    properties:
+      amount:
+        type: integer
+      toUser:
+        type: string
+    type: object
+  models.SentTransaction:
+    description: Отправленные коины
+    properties:
+      amount:
+        type: integer
+      toUser:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server 4 Test Avito
+  title: Avito SHop API
+  version: "1.0"
+paths:
+  /api/auth:
+    post:
+      consumes:
+      - application/json
+      description: create/login account 4 user
+      operationId: create/login-account-user
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: GetAuthToken
+      tags:
+      - auth
+  /api/buy/{item}:
+    get:
+      description: buy item 4 user
+      operationId: buy-item-4-user
+      parameters:
+      - description: Item to purchase
+        enum:
+        - t-shirt
+        - cup
+        - book
+        - pen
+        - powerbank
+        - hoody
+        - umbrella
+        - socks
+        - wallet
+        - pink-hoody
+        in: path
+        name: item
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: BuyItem
+      tags:
+      - shop
+  /api/info:
+    get:
+      description: get info 4 user
+      operationId: get-info-4-user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InfoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: GetUserInfo
+      tags:
+      - shop
+  /api/sendCoin:
+    post:
+      description: send coin to user
+      operationId: send-coin-to-user
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.SendCoinRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: SendCoin
+      tags:
+      - shop
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

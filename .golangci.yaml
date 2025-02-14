@@ -1,0 +1,35 @@
+# .golangci.yaml
+run:
+  tests: true
+  timeout: 5m
+
+linters:
+  disable-all: false
+  enable:
+    - govet
+    - staticcheck
+    - gosimple
+    - deadcode
+    - ineffassign
+    - unused
+    - varcheck
+    - structcheck
+    - typecheck
+  disable:
+    - gocyclo
+    - dupl
+    - gofmt
+    - errcheck
+
+linters-settings:
+  govet:
+    check-shadowing: true
+  errcheck:
+    check-type-assertions: true
+  staticcheck:
+    checks: ["all"]
+
+issues:
+  exclude-use-default: false
+  exclude:
+    - "error return value not checked.*Close"

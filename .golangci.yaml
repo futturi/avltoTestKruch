@@ -9,12 +9,11 @@ linters:
     - govet
     - staticcheck
     - gosimple
-    - deadcode
     - ineffassign
     - unused
-    - varcheck
-    - structcheck
     - typecheck
+    - sqlclosecheck
+    - nilerr
   disable:
     - gocyclo
     - dupl

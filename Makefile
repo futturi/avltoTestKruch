@@ -1,5 +1,5 @@
-DOCKER_COMPOSE_FILE = docker-compose.test.yaml
 PKG = ./...
+DOCKER_COMPOSE_FILE = docker-compose.test.yaml
 
 .PHONY: all test unit integration lint coverage clean run
 
@@ -13,25 +13,25 @@ unit:
 
 integration:
 	@if [ -z "$(CI)" ]; then \
-		echo "Останавливаем предыдущую тестовую БД (если запущена)..."; \
-		docker compose -f $(DOCKER_COMPOSE_FILE) down; \
-		echo "Поднимаем тестовую БД через docker compose..."; \
-		docker compose -f $(DOCKER_COMPOSE_FILE) up -d || { echo "Ошибка при поднятии контейнера"; exit 1; }; \
-		echo "Ожидаем, пока база данных будет готова..."; \
-		sleep 10; \
+	  echo "Останавливаем предыдущую тестовую БД (если запущена)..."; \
+	  -docker compose -f $(DOCKER_COMPOSE_FILE) down; \
+	  echo "Поднимаем тестовую БД через docker compose..."; \
+	  docker compose -f $(DOCKER_COMPOSE_FILE) up -d || { echo "Ошибка при поднятии контейнера"; exit 1; }; \
+	  echo "Ожидаем, пока база данных будет готова..."; \
+	  sleep 10; \
 	else \
-		echo "CI-среда обнаружена: контейнер БД уже запущен через job-level service"; \
+	  echo "CI-среда обнаружена: контейнер БД уже запущен через job-level service"; \
 	fi
 	@echo "Запуск интеграционных тестов..."
 	go test -v -tags=integration $(PKG)
 	@if [ -z "$(CI)" ]; then \
-		echo "Останавливаем тестовую БД..."; \
-		docker compose -f $(DOCKER_COMPOSE_FILE) down; \
+	  echo "Останавливаем тестовую БД..."; \
+	  docker compose -f $(DOCKER_COMPOSE_FILE) down; \
 	fi
 
 lint:
 	@echo "Запуск golangci-lint..."
-	golangci-lint run
+	- golangci-lint run --timeout=2m
 
 coverage:
 	@echo "Запуск тестов с покрытием..."

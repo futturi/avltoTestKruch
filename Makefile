@@ -13,13 +13,13 @@ unit:
 
 integration:
 	@echo "Поднимаем тестовую БД через docker-compose..."
-	docker-compose -f $(DOCKER_COMPOSE_FILE) up -d
+	docker compose -f $(DOCKER_COMPOSE_FILE) up -d
 	@echo "Ожидаем, пока база данных будет готова..."
 	@sleep 7
 	@echo "Запуск интеграционных тестов..."
 	go test -v -tags=integration $(PKG)
 	@echo "Останавливаем тестовую БД..."
-	docker-compose -f $(DOCKER_COMPOSE_FILE) down
+	docker compose -f $(DOCKER_COMPOSE_FILE) down
 
 lint:
 	@echo "Запуск golangci-lint..."

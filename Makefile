@@ -31,7 +31,7 @@ integration:
 
 lint:
 	@echo "Запуск golangci-lint..."
-	- golangci-lint run --timeout=2m
+	- golangci-lint run --timeout=5m --concurrency=2
 
 coverage:
 	@echo "Запуск тестов с покрытием..."
